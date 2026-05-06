@@ -1,3 +1,5 @@
 customtkinter
+openpyxl
+reportlab
 packaging
 darkdetect
