@@ -1,59 +1,68 @@
 # main.py
-
 import customtkinter as ctk
 from database.connection import DatabaseConnection
-# --- NUEVA IMPORTACIÓN ---
+
+# IMPORTACIONES DE LAS VISTAS (Asegúrate de tener estos archivos)
 from ui.inventory_view import InventoryView 
+from ui.products_view import ProductsView
 
 def main() -> None:
     # ------------------------------------------------------------------
-    # 1. Inicializar la base de datos
+    # 1. Inicializar DB
     # ------------------------------------------------------------------
     db = DatabaseConnection.get_instance()
     db.connect()
-    conn = db.get_connection() # Obtenemos la conexión real para los repositorios
+    conn = db.get_connection()
 
     # ------------------------------------------------------------------
-    # 2. Configuración global de CustomTkinter
+    # 2. Configuración Ventana
     # ------------------------------------------------------------------
     ctk.set_appearance_mode("dark")
     ctk.set_default_color_theme("blue")
-
-    # ------------------------------------------------------------------
-    # 3. Ventana principal
-    # ------------------------------------------------------------------
     app = ctk.CTk()
     app.title("Fast Food App - Medellín")
-    app.geometry("1000x700") # Un poco más grande para la tabla
-    app.minsize(800, 500)
+    app.geometry("1100x750")
 
-    # Cerrar la conexión al salir
     app.protocol("WM_DELETE_WINDOW", lambda: (db.close(), app.destroy()))
 
     # ------------------------------------------------------------------
-    # 4. Estructura de la Interfaz
+    # 3. FUNCIONES DE NAVEGACIÓN (Deben estar antes de los botones)
     # ------------------------------------------------------------------
-    
-    # Título superior
-    title_label = ctk.CTkLabel(
-        app, 
-        text="SISTEMA DE INVENTARIO", 
-        font=ctk.CTkFont(size=24, weight="bold")
-    )
-    title_label.pack(pady=20)
+    def mostrar_inventario():
+        products_page.pack_forget() # Esconde productos
+        inventory_page.pack(fill="both", expand=True)
 
-    # Contenedor principal donde vivirán las vistas
+    def mostrar_productos():
+        inventory_page.pack_forget() # Esconde inventario
+        products_page.pack(fill="both", expand=True)
+
+    # ------------------------------------------------------------------
+    # 4. LAYOUT: BARRA DE NAVEGACIÓN (SUPERIOR)
+    # ------------------------------------------------------------------
+    nav_frame = ctk.CTkFrame(app, height=60)
+    nav_frame.pack(fill="x", padx=20, pady=10)
+
+    btn_inv = ctk.CTkButton(nav_frame, text="📦 Inventario", command=mostrar_inventario)
+    btn_inv.pack(side="left", padx=10, pady=10)
+
+    btn_prod = ctk.CTkButton(nav_frame, text="🍔 Productos y Recetas", command=mostrar_productos)
+    btn_prod.pack(side="left", padx=10, pady=10)
+
+    # ------------------------------------------------------------------
+    # 5. CONTENEDOR PRINCIPAL
+    # ------------------------------------------------------------------
     container = ctk.CTkFrame(app)
     container.pack(fill="both", expand=True, padx=20, pady=(0, 20))
 
-    # --- INTEGRACIÓN DE LA FASE 2 ---
-    # Instanciamos la vista de inventario y le pasamos la conexión
+    # ------------------------------------------------------------------
+    # 6. INSTANCIAR VISTAS (Aquí es donde se "pegan" los módulos)
+    # ------------------------------------------------------------------
     inventory_page = InventoryView(container, conn)
+    products_page = ProductsView(container, conn)
+
+    # Mostrar inventario por defecto al arrancar
     inventory_page.pack(fill="both", expand=True)
 
-    # ------------------------------------------------------------------
-    # 5. Iniciar el loop principal
-    # ------------------------------------------------------------------
     app.mainloop()
 
 if __name__ == "__main__":

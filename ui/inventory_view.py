@@ -20,9 +20,9 @@ from models.insumo import Insumo
 COLOR_ALERTA = "#FF6B6B"
 COLOR_OK = "#4CAF50"
 COLOR_HEADER = "#2B2D42"
-COLOR_ROW_EVEN = "#F0F0F0"
-COLOR_ROW_ODD = "#FFFFFF"
-COLOR_BAJO_STOCK = "#FFF3CD"
+COLOR_ROW_EVEN = "#4BD6C4"
+COLOR_ROW_ODD = "#4944DA"
+COLOR_BAJO_STOCK = "#A99861"
 FUENTE_TABLA = ("Segoe UI", 12)
 FUENTE_HEADER = ("Segoe UI", 12, "bold")
 COLUMNAS = ["ID", "Nombre", "Unidad", "Stock", "Mín.", "Precio/U", "Valor total", "Estado"]
