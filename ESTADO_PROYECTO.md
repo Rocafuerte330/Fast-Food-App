@@ -51,3 +51,11 @@
 | 2    | Inventario    | 🔄 Siguiente   |
 | 3    | Ventas        | ⏳ Pendiente   |
 | 4    | Reportes      | ⏳ Pendiente   |
+
+
+---
+
+### 💡 Comandos Rápidos (macOS)
+- **Activar Entorno:** `source venv/bin/activate`
+- **Ejecutar App:** `python3 main.py`
+- **Instalar nuevas librerías:** `pip install -r requirements.txt`
