@@ -2,41 +2,21 @@
 
 import customtkinter as ctk
 from database.connection import DatabaseConnection
-
-
-def test_db_connection() -> None:
-    """
-    Callback del botón 'Test DB'.
-    Ejecuta una query liviana para verificar que la conexión
-    y las tablas existen correctamente.
-    """
-    try:
-        db = DatabaseConnection.get_instance()
-        conn = db.get_connection()
-        cursor = conn.cursor()
-
-        # Leer la lista de tablas es una prueba real sin side-effects
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;")
-        tablas = [row["name"] for row in cursor.fetchall()]
-
-        print("✅ Conexión exitosa.")
-        print(f"   Tablas encontradas ({len(tablas)}): {', '.join(tablas)}")
-
-    except Exception as e:
-        print(f"❌ Error en la conexión: {e}")
-
+# --- NUEVA IMPORTACIÓN ---
+from ui.inventory_view import InventoryView 
 
 def main() -> None:
     # ------------------------------------------------------------------
-    # 1. Inicializar la base de datos ANTES de levantar la UI
+    # 1. Inicializar la base de datos
     # ------------------------------------------------------------------
     db = DatabaseConnection.get_instance()
     db.connect()
+    conn = db.get_connection() # Obtenemos la conexión real para los repositorios
 
     # ------------------------------------------------------------------
     # 2. Configuración global de CustomTkinter
     # ------------------------------------------------------------------
-    ctk.set_appearance_mode("dark")          # "dark" | "light" | "system"
+    ctk.set_appearance_mode("dark")
     ctk.set_default_color_theme("blue")
 
     # ------------------------------------------------------------------
@@ -44,46 +24,37 @@ def main() -> None:
     # ------------------------------------------------------------------
     app = ctk.CTk()
     app.title("Fast Food App - Medellín")
-    app.geometry("900x600")
-    app.minsize(700, 450)
+    app.geometry("1000x700") # Un poco más grande para la tabla
+    app.minsize(800, 500)
 
-    # Cerrar la conexión a SQLite cuando el usuario cierra la ventana
+    # Cerrar la conexión al salir
     app.protocol("WM_DELETE_WINDOW", lambda: (db.close(), app.destroy()))
 
     # ------------------------------------------------------------------
-    # 4. Layout de prueba (se reemplazará con las vistas reales)
+    # 4. Estructura de la Interfaz
     # ------------------------------------------------------------------
-    frame = ctk.CTkFrame(app)
-    frame.pack(expand=True)
-
-    label = ctk.CTkLabel(
-        frame,
-        text="Fast Food App",
-        font=ctk.CTkFont(size=28, weight="bold"),
+    
+    # Título superior
+    title_label = ctk.CTkLabel(
+        app, 
+        text="SISTEMA DE INVENTARIO", 
+        font=ctk.CTkFont(size=24, weight="bold")
     )
-    label.pack(pady=(40, 8))
+    title_label.pack(pady=20)
 
-    subtitle = ctk.CTkLabel(
-        frame,
-        text="Medellín 🇨🇴",
-        font=ctk.CTkFont(size=14),
-        text_color="gray",
-    )
-    subtitle.pack(pady=(0, 32))
+    # Contenedor principal donde vivirán las vistas
+    container = ctk.CTkFrame(app)
+    container.pack(fill="both", expand=True, padx=20, pady=(0, 20))
 
-    btn_test = ctk.CTkButton(
-        frame,
-        text="Test DB",
-        width=160,
-        command=test_db_connection,
-    )
-    btn_test.pack()
+    # --- INTEGRACIÓN DE LA FASE 2 ---
+    # Instanciamos la vista de inventario y le pasamos la conexión
+    inventory_page = InventoryView(container, conn)
+    inventory_page.pack(fill="both", expand=True)
 
     # ------------------------------------------------------------------
     # 5. Iniciar el loop principal
     # ------------------------------------------------------------------
     app.mainloop()
-
 
 if __name__ == "__main__":
     main()

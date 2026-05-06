@@ -4,11 +4,12 @@ SQL_SCHEMA = """
 CREATE TABLE IF NOT EXISTS insumos (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     nombre          TEXT    NOT NULL UNIQUE,
-    unidad_medida   TEXT    NOT NULL,
-    cantidad_stock  REAL    NOT NULL DEFAULT 0,
-    costo_unitario  REAL    NOT NULL DEFAULT 0,
+    unidad          TEXT    NOT NULL,
+    stock           REAL    NOT NULL DEFAULT 0,
     stock_minimo    REAL    NOT NULL DEFAULT 0,
-    created_at      TEXT    NOT NULL DEFAULT (datetime('now'))
+    precio_unit     REAL    NOT NULL DEFAULT 0,
+    created_at      TEXT    NOT NULL DEFAULT (datetime('now')),
+    updated_at      TEXT    NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS productos (
